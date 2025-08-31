@@ -1,1 +1,127 @@
-async function loadContent(){try{const res=await fetch('content.json');const data=await res.json();const aboutEl=document.getElementById('about-text');const contactEl=document.getElementById('contact-text');if(aboutEl)aboutEl.innerText=data.about||'';if(contactEl)contactEl.innerText=data.contact||'';}catch(e){console.error(e);} } async function loadBible(){const res=await fetch('bible.json');const data=await res.json();const flat=[];for(const book of data){const bname=book.name||book.abbrev||'Unknown';const chapters=book.chapters||[];for(let ci=0;ci<chapters.length;ci++){const ch=chapters[ci]||[];for(let vi=0;vi<ch.length;vi++){const text=ch[vi]||'';flat.push({book:bname,chapter:ci+1,verse:vi+1,text});}}}return flat;} function renderResults(results,container){container.innerHTML='';if(!results.length){container.innerHTML='<p class=\"small\">Nothing found. Remember, even small words can lead to big truths.</p>';return;}for(const r of results){const card=document.createElement('div');card.className='card';const ref=document.createElement('div');ref.className='ref';ref.innerText=`${r.book} ${r.chapter}:${r.verse}`;const verse=document.createElement('div');verse.className='verse';verse.innerText=r.text;const actions=document.createElement('div');actions.className='actions';const copyBtn=document.createElement('button');copyBtn.className='btn';copyBtn.textContent='Copy';copyBtn.onclick=()=>{navigator.clipboard.writeText(`${r.text} — ${r.book} ${r.chapter}:${r.verse}`).then(()=>{copyBtn.textContent='Copied!';setTimeout(()=>copyBtn.textContent='Copy',1200);});};const shareBtn=document.createElement('button');shareBtn.className='btn';shareBtn.textContent='Share';shareBtn.onclick=()=>{const shareUrl=`${location.origin}${location.pathname}?q=${encodeURIComponent(r.text)}`;navigator.clipboard.writeText(shareUrl).then(()=>{shareBtn.textContent='Link copied';setTimeout(()=>shareBtn.textContent='Share',1200);});};actions.appendChild(copyBtn);actions.appendChild(shareBtn);card.appendChild(ref);card.appendChild(verse);card.appendChild(actions);container.appendChild(card);} } document.addEventListener('DOMContentLoaded',async()=>{await loadContent();const bible=await loadBible();const input=document.getElementById('search-input');const resultsEl=document.getElementById('results');function doSearch(){const q=(input.value||'').trim().toLowerCase();if(!q){resultsEl.innerHTML='<p class=\"small\">Type a few words from a verse and press Enter or click Search.</p>';return;}const out=bible.filter(v=>v.text.toLowerCase().includes(q));renderResults(out,resultsEl);}document.getElementById('search-form').addEventListener('submit',(e)=>{e.preventDefault();doSearch();});document.getElementById('search-btn').addEventListener('click',doSearch);const params=new URLSearchParams(location.search);if(params.get('q')){input.value=params.get('q');doSearch();}else{resultsEl.innerHTML='<p class=\"small\">Type a few words from a verse and press Enter or click Search.</p>'}});
+async function loadContent() {
+  try {
+    const res = await fetch('content.json');
+    const data = await res.json();
+    const aboutEl = document.getElementById('about-text');
+    const contactEl = document.getElementById('contact-text');
+    if (aboutEl) aboutEl.innerText = data.about || '';
+    if (contactEl) contactEl.innerText = data.contact || '';
+  } catch (e) {
+    console.error(e);
+  }
+}
+
+async function loadBible() {
+  const res = await fetch('bible.json');
+  const data = await res.json();
+  const flat = [];
+  for (const book of data) {
+    const bname = book.name || book.abbrev || 'Unknown';
+    const chapters = book.chapters || [];
+    for (let ci = 0; ci < chapters.length; ci++) {
+      const ch = chapters[ci] || [];
+      for (let vi = 0; vi < ch.length; vi++) {
+        const text = ch[vi] || '';
+        flat.push({ book: bname, chapter: ci + 1, verse: vi + 1, text });
+      }
+    }
+  }
+  return flat;
+}
+
+function renderResults(results, container) {
+  container.innerHTML = '';
+  if (!results.length) {
+    container.innerHTML = '<p class="small">Nothing found. Remember, even small words can lead to big truths.</p>';
+    return;
+  }
+  for (const r of results) {
+    const card = document.createElement('div');
+    card.className = 'card';
+    const ref = document.createElement('div');
+    ref.className = 'ref';
+    ref.innerText = `${r.book} ${r.chapter}:${r.verse}`;
+    const verse = document.createElement('div');
+    verse.className = 'verse';
+    verse.innerText = r.text;
+
+    const actions = document.createElement('div');
+    actions.className = 'actions';
+
+    const copyBtn = document.createElement('button');
+    copyBtn.className = 'btn';
+    copyBtn.textContent = 'Copy';
+    copyBtn.onclick = () => {
+      navigator.clipboard.writeText(`${r.text} — ${r.book} ${r.chapter}:${r.verse}`).then(() => {
+        copyBtn.textContent = 'Copied!';
+        setTimeout(() => copyBtn.textContent = 'Copy', 1200);
+      });
+    };
+
+    const shareBtn = document.createElement('button');
+    shareBtn.className = 'btn';
+    shareBtn.textContent = 'Share';
+    shareBtn.onclick = () => {
+      const shareUrl = `${location.origin}${location.pathname}?q=${encodeURIComponent(r.text)}`;
+      navigator.clipboard.writeText(shareUrl).then(() => {
+        shareBtn.textContent = 'Link copied';
+        setTimeout(() => shareBtn.textContent = 'Share', 1200);
+      });
+    };
+
+    actions.appendChild(copyBtn);
+    actions.appendChild(shareBtn);
+    card.appendChild(ref);
+    card.appendChild(verse);
+    card.appendChild(actions);
+    container.appendChild(card);
+  }
+}
+
+document.addEventListener('DOMContentLoaded', async () => {
+  await loadContent();
+  const bible = await loadBible();
+  const input = document.getElementById('search-input');
+  const resultsEl = document.getElementById('results');
+
+  // Initialize Fuse.js
+  const fuse = new Fuse(bible, {
+    keys: ['text'],
+    includeScore: true,
+    threshold: 0.42,
+    ignoreLocation: true,
+    minMatchCharLength: 2
+  });
+
+  function doSearch() {
+    const q = (input.value || '').trim();
+    if (!q) {
+      resultsEl.innerHTML = '<p class="small">Type a few words from a verse and press Enter or click Search.</p>';
+      return;
+    }
+
+    // First try fuzzy search
+    let out = fuse.search(q).map(r => r.item);
+
+    // If fuzzy finds nothing, fall back to exact search
+    if (out.length === 0) {
+      out = bible.filter(v => v.text.toLowerCase().includes(q.toLowerCase()));
+    }
+
+    renderResults(out, resultsEl);
+  }
+
+  document.getElementById('search-form').addEventListener('submit', (e) => {
+    e.preventDefault();
+    doSearch();
+  });
+  document.getElementById('search-btn').addEventListener('click', doSearch);
+
+  const params = new URLSearchParams(location.search);
+  if (params.get('q')) {
+    input.value = params.get('q');
+    doSearch();
+  } else {
+    resultsEl.innerHTML = '<p class="small">Type a few words from a verse and press Enter or click Search.</p>';
+  }
+});
