@@ -6,9 +6,10 @@
 <title>Contact — VerseFinder</title>
 <link rel="stylesheet" href="style.css" />
 <style>
-  /* Gold color for specific message */
+  /* Soft gold color for specific message */
   .gold-text {
-    color: #d4af37;
+      color: #bfa243; /* soft, readable gold */
+      font-weight: 500; /* slightly bolder for readability */
   }
 </style>
 </head>
@@ -37,19 +38,17 @@
 </div>
 
 <script>
-  // Fetch content from content.json and wrap it in gold-text class with formatting preserved
-  fetch('content.json')
-    .then(response => response.json())
-    .then(data => {
-        const text = data.contact || "Contact content not available.";
-        // Replace \n with <br> for proper line breaks
-        const formattedText = text.replace(/\n/g, '<br>');
-        document.getElementById('contact-text').innerHTML = `<span class="gold-text">${formattedText}</span>`;
-    })
-    .catch(err => {
-        document.getElementById('contact-text').innerText = "Failed to load content.";
-        console.error(err);
-    });
+fetch('content.json')
+  .then(response => response.json())
+  .then(data => {
+      const text = data.contact || "Contact content not available.";
+      const formattedText = text.replace(/\n/g, '<br>'); // preserve line breaks
+      document.getElementById('contact-text').innerHTML = `<span class="gold-text">${formattedText}</span>`;
+  })
+  .catch(err => {
+      document.getElementById('contact-text').innerText = "Failed to load content.";
+      console.error(err);
+  });
 </script>
 </body>
 </html>
