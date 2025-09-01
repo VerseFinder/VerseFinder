@@ -37,13 +37,14 @@
 </div>
 
 <script>
-  // Fetch content from content.json and wrap it in gold-text class
+  // Fetch content from content.json and wrap it in gold-text class with formatting preserved
   fetch('content.json')
     .then(response => response.json())
     .then(data => {
-        // Use the correct key "contact"
         const text = data.contact || "Contact content not available.";
-        document.getElementById('contact-text').innerHTML = `<span class="gold-text">${text}</span>`;
+        // Replace \n with <br> for proper line breaks
+        const formattedText = text.replace(/\n/g, '<br>');
+        document.getElementById('contact-text').innerHTML = `<span class="gold-text">${formattedText}</span>`;
     })
     .catch(err => {
         document.getElementById('contact-text').innerText = "Failed to load content.";
