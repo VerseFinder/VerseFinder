@@ -1,6 +1,50 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8" /><meta name="viewport" content="width=device-width,initial-scale=1" /><title>VerseFinder</title><link rel="stylesheet" href="style.css" /></head><body><div class="container"><header class="header"><a class="brand" href="index.html"><div class="logo">VF</div><div><div style="font-weight:800">VerseFinder</div><div class="small">Find Bible verses from any fragment</div></div></a><nav class="nav"><a href="about.html">About</a><a href="contact.html">Contact</a></nav></header><main><section class="hero"><h1 style="margin:0">Find Bible verses by text</h1><p class="small" style="margin-top:8px">Type any part of a verse (even just the ending words) and press Search.</p><form id="search-form" class="search-box" style="margin-top:18px"><input id="search-input" class="search" placeholder="Type verse fragment (e.g. 'everlasting life')" /><button id="search-btn" class="btn" type="button">Search</button></form><div id="results" class="results" style="margin-top:18px"></div></section></main><footer class="footer"><div id="footer-verse" class="small">May the Word guide you.</div></footer></div>
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>VerseFinder</title>
+<link rel="stylesheet" href="style.css" />
+<style>
+  /* Only target specific texts */
+  .hero .small,      /* "Type any part of a verse..." */
+  .footer .small,    /* "May the Word guide you." */
+  .header .brand .small { /* "Find Bible verses from any fragment" */
+    color: #d4af37; /* Gold color */
+  }
+</style>
+</head>
+<body>
+<div class="container">
+  <header class="header">
+    <a class="brand" href="index.html">
+      <div class="logo">VF</div>
+      <div>
+        <div style="font-weight:800">VerseFinder</div>
+        <div class="small">Find Bible verses from any fragment</div>
+      </div>
+    </a>
+    <nav class="nav">
+      <a href="about.html">About</a>
+      <a href="contact.html">Contact</a>
+    </nav>
+  </header>
+  <main>
+    <section class="hero">
+      <h1 style="margin:0">Find Bible verses by text</h1>
+      <p class="small" style="margin-top:8px">Type any part of a verse (even just the ending words) and press Search.</p>
+      <form id="search-form" class="search-box" style="margin-top:18px">
+        <input id="search-input" class="search" placeholder="Type verse fragment (e.g. 'everlasting life')" />
+        <button id="search-btn" class="btn" type="button">Search</button>
+      </form>
+      <div id="results" class="results" style="margin-top:18px"></div>
+    </section>
+  </main>
+  <footer class="footer">
+    <div id="footer-verse" class="small">May the Word guide you.</div>
+  </footer>
+</div>
 <script src="https://cdn.jsdelivr.net/npm/fuse.js@6.6.2"></script>
 <script src="script.js"></script>
 </body>
 </html>
-
