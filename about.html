@@ -1,1 +1,54 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8" /><meta name="viewport" content="width=device-width,initial-scale=1" /><title>About — VerseFinder</title><link rel="stylesheet" href="style.css" /></head><body><div class="container"><header class="header"><a class="brand" href="index.html"><div class="logo">VF</div><div><div style="font-weight:800">VerseFinder</div><div class="small">Find Bible verses from any fragment</div></div></a><nav class="nav"><a href="index.html">Home</a><a href="contact.html">Contact</a></nav></header><main><h1>About</h1><p id="about-text">Loading...</p></main><footer class="footer"><div class="small">Made solo by Dwayne Gulifardo — VerseFinder</div></footer></div><script src="script.js"></script></body></html>
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>About — VerseFinder</title>
+<link rel="stylesheet" href="style.css" />
+<style>
+  /* Gold color for specific message */
+  .gold-text {
+    color: #d4af37;
+  }
+</style>
+</head>
+<body>
+<div class="container">
+  <header class="header">
+    <a class="brand" href="index.html">
+      <div class="logo">VF</div>
+      <div>
+        <div style="font-weight:800">VerseFinder</div>
+        <div class="small">Find Bible verses from any fragment</div>
+      </div>
+    </a>
+    <nav class="nav">
+      <a href="index.html">Home</a>
+      <a href="contact.html">Contact</a>
+    </nav>
+  </header>
+  <main>
+    <h1>About</h1>
+    <p id="about-text">Loading...</p>
+  </main>
+  <footer class="footer">
+    <div class="small">Made solo by Dwayne Gulifardo — VerseFinder</div>
+  </footer>
+</div>
+
+<script>
+  // Fetch content from content.json and wrap it in gold-text class
+  fetch('content.json')
+    .then(response => response.json())
+    .then(data => {
+        // Use the correct key "about"
+        const text = data.about || "About content not available.";
+        document.getElementById('about-text').innerHTML = `<span class="gold-text">${text}</span>`;
+    })
+    .catch(err => {
+        document.getElementById('about-text').innerText = "Failed to load content.";
+        console.error(err);
+    });
+</script>
+</body>
+</html>
